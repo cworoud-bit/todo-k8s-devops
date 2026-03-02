@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App - Gestionnaire de tâches</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .add-task {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .add-task h3 {
+            margin-bottom: 20px;
+            color: #495057;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .tasks-list {
+            padding: 30px;
+        }
+
+        .tasks-list h3 {
+            margin-bottom: 20px;
+            color: #495057;
+        }
+
+        .task-card {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .task-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .task-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-in_progress {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .task-description {
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-edit, .btn-delete {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: opacity 0.2s;
+        }
+
+        .btn-edit {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-edit:hover, .btn-delete:hover {
+            opacity: 0.8;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+        }
+
+        .error {
+            text-align: center;
+            padding: 30px;
+            color: #dc3545;
+        }
+
+        .no-tasks {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+        }
+    </style>
+<script>
+    // Utiliser localhost car le port 5000 est exposé sur l'hôte
+    window.API_URL = 'http://localhost:5000';
+</script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 Gestionnaire de Tâches</h1>
+            <p>Application full-stack avec Docker Compose</p>
+        </div>
+
+        <div class="add-task">
+            <h3>Ajouter une nouvelle tâche</h3>
+            <div class="form-group">
+                <label for="title">Titre *</label>
+                <input type="text" id="title" placeholder="Entrez le titre de la tâche" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" placeholder="Description de la tâche (optionnel)"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="status">Statut</label>
+                <select id="status">
+                    <option value="pending">En attente</option>
+                    <option value="in_progress">En cours</option>
+                    <option value="completed">Terminé</option>
+                </select>
+            </div>
+            <button onclick="addTask()">Ajouter la tâche</button>
+        </div>
+
+        <div class="tasks-list">
+            <h3>Liste des tâches</h3>
+            <div id="tasks-container">
+                <div class="loading">Chargement des tâches...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get API URL from environment variable
+     
+    // Utiliser localhost car le port 5000 est exposé sur l'hôte
+    const API_URL = window.API_URL || 'http://localhost:5000';
+        console.log('API URL:', API_URL);
+
+        // Fetch all tasks on page load
+        document.addEventListener('DOMContentLoaded', fetchTasks);
+
+        async function fetchTasks() {
+            const container = document.getElementById('tasks-container');
+            
+            try {
+                const response = await fetch(`${API_URL}/api/tasks`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const tasks = await response.json();
+                
+                if (tasks.length === 0) {
+                    container.innerHTML = '<div class="no-tasks">Aucune tâche trouvée. Ajoutez votre première tâche !</div>';
+                } else {
+                    container.innerHTML = tasks.map(task => createTaskCard(task)).join('');
+                }
+            } catch (error) {
+                console.error('Error fetching tasks:', error);
+                container.innerHTML = `<div class="error">Erreur de chargement des tâches: ${error.message}</div>`;
+            }
+        }
+
+        async function addTask() {
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const status = document.getElementById('status').value;
+
+            if (!title.trim()) {
+                alert('Le titre est obligatoire');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/tasks`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        description: description,
+                        status: status
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                // Clear form
+                document.getElementById('title').value = '';
+                document.getElementById('description').value = '';
+                document.getElementById('status').value = 'pending';
+
+                // Refresh tasks list
+                fetchTasks();
+            } catch (error) {
+                console.error('Error adding task:', error);
+                alert(`Erreur lors de l'ajout de la tâche: ${error.message}`);
+            }
+        }
+
+        async function updateTask(id, currentStatus) {
+            let newStatus;
+            switch(currentStatus) {
+                case 'pending':
+                    newStatus = 'in_progress';
+                    break;
+                case 'in_progress':
+                    newStatus = 'completed';
+                    break;
+                default:
+                    newStatus = 'pending';
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/tasks/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: newStatus
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                fetchTasks();
+            } catch (error) {
+                console.error('Error updating task:', error);
+                alert(`Erreur lors de la mise à jour: ${error.message}`);
+            }
+        }
+
+        async function deleteTask(id) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/tasks/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                fetchTasks();
+            } catch (error) {
+                console.error('Error deleting task:', error);
+                alert(`Erreur lors de la suppression: ${error.message}`);
+            }
+        }
+
+        function createTaskCard(task) {
+            const statusClass = task.status === 'pending' ? 'status-pending' :
+                               task.status === 'in_progress' ? 'status-in_progress' :
+                               'status-completed';
+            
+            const statusText = task.status === 'pending' ? 'En attente' :
+                              task.status === 'in_progress' ? 'En cours' :
+                              'Terminé';
+
+            return `
+                <div class="task-card" data-id="${task.id}">
+                    <div class="task-header">
+                        <span class="task-title">${escapeHtml(task.title)}</span>
+                        <span class="task-status ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="task-description">
+                        ${escapeHtml(task.description) || '<em>Aucune description</em>'}
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn-edit" onclick="updateTask(${task.id}, '${task.status}')">
+                            Avancer
+                        </button>
+                        <button class="btn-delete" onclick="deleteTask(${task.id})">
+                            Supprimer
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function escapeHtml(unsafe) {
+            if (!unsafe) return unsafe;
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>

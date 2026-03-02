@@ -1,0 +1,31 @@
+@"
+# Environment variables
+.env
+*.env
+
+# Docker
+**/Dockerfile
+**/.dockerignore
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+"@ | Out-File -FilePath .gitignore -Encoding UTF8
