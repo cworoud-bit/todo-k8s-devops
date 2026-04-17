@@ -142,14 +142,20 @@ def update_task(task_id):
     try:
         cur = conn.cursor()
         # Check if task exists
-        cur.execute('SELECT id FROM tasks WHERE id = %s', (task_id,))
-        if not cur.fetchone():
+        cur.execute('SELECT title, description, status FROM tasks WHERE id = %s', (task_id,))
+        current_task = cur.fetchone()
+        if not current_task:
             return jsonify({'error': 'Task not found'}), 404
         
-        # Update task
+        # 2. Use existing values as defaults if keys are missing in 'data'
+        new_title = data.get('title', current_task[0])
+        new_description = data.get('description', current_task[1])
+        new_status = data.get('status', current_task[2])
+        
+        # 3. Perform the update with safe values
         cur.execute(
             'UPDATE tasks SET title = %s, description = %s, status = %s WHERE id = %s',
-            (data.get('title'), data.get('description'), data.get('status'), task_id)
+            (new_title, new_description, new_status, task_id)
         )
         conn.commit()
         cur.close()

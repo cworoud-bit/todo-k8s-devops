@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo App - Gestionnaire de tâches</title>
+    <title>Todo Application - Gestionnaire de tâches</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ea66e3 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -28,7 +28,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #830083 0%, #764ba2 100%);
             color: white;
             padding: 30px;
             text-align: center;
@@ -82,7 +82,7 @@
         }
 
         button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ea66e1 0%, #764ba2 100%);
             color: white;
             border: none;
             padding: 12px 30px;
@@ -108,7 +108,7 @@
 
         .task-card {
             background: #f8f9fa;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #ea66c5;
             padding: 20px;
             margin-bottom: 15px;
             border-radius: 5px;
@@ -202,8 +202,8 @@
         }
     </style>
 <script>
-    // Utiliser localhost car le port 5000 est exposé sur l'hôte
-    window.API_URL = 'http://localhost:5000';
+    
+    window.API_URL = "http://localhost:30005";
 </script>
 </head>
 <body>
@@ -216,7 +216,7 @@
         <div class="add-task">
             <h3>Ajouter une nouvelle tâche</h3>
             <div class="form-group">
-                <label for="title">Titre *</label>
+                <label for="title">Titre </label>
                 <input type="text" id="title" placeholder="Entrez le titre de la tâche" required>
             </div>
             <div class="form-group">
@@ -246,7 +246,7 @@
         // Get API URL from environment variable
      
     // Utiliser localhost car le port 5000 est exposé sur l'hôte
-    const API_URL = window.API_URL || 'http://localhost:5000';
+    const API_URL = window.API_URL || 'http://localhost:30005';
         console.log('API URL:', API_URL);
 
         // Fetch all tasks on page load
