@@ -14,14 +14,14 @@ spec:
     spec:
       containers:
       - name: backend
-        # Remplace par le nom exact de ton image locale (ex: todo-backend:latest)
+      
         image: tasks-todo-backend:latest 
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
         env:
         - name: DB_HOST
-          value: "db-service" # Doit correspondre au nom du Service de la DB
+          value: "db-service" 
         - name: DB_PORT
           value: "5432"
         - name: DB_NAME
@@ -40,9 +40,9 @@ metadata:
 spec:
   selector:
     app: todo-backend
-  # Fil backend-service.yaml beddel el type
+  
   type: NodePort
   ports:
   - port: 5000
     targetPort: 5000
-    nodePort: 30005 # El API twalli f http://localhost:30005
+    nodePort: 30005 
